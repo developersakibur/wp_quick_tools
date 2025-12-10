@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "WordPress Detector",
+  "version": "1.0",
+  "description": "Detect WordPress sites and quick access to admin panel",
+  "permissions": ["browsingData", "storage", "tabs", "scripting", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
