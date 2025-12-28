@@ -1,4 +1,4 @@
-(async function() {
+(async function () {
   let currentUrl = '';
   let baseUrl = '';
   let domain = '';
@@ -22,16 +22,16 @@
     try {
       const result = await chrome.storage.local.get(['wpCache']);
       const cache = result.wpCache || {};
-      
+
       if (cache[domain]) {
         const { isWordPress, timestamp } = cache[domain];
         const age = Date.now() - timestamp;
-        
+
         if (age < CACHE_DURATION) {
           return { isWordPress, fromCache: true };
         }
       }
-      
+
       return null;
     } catch (e) {
       console.error('Cache read error:', e);
@@ -44,12 +44,12 @@
     try {
       const result = await chrome.storage.local.get(['wpCache']);
       const cache = result.wpCache || {};
-      
+
       cache[domain] = {
         isWordPress: isWordPress,
         timestamp: Date.now()
       };
-      
+
       await chrome.storage.local.set({ wpCache: cache });
     } catch (e) {
       console.error('Cache write error:', e);
@@ -64,29 +64,29 @@
     }
 
     console.log('Checking WordPress status for', domain);
-    
+
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      
+
       const results = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => {
-          if (document.querySelector('link[href*="wp-content"]') || 
-              document.querySelector('script[src*="wp-includes"]') || 
-              document.querySelector('script[src*="wp-content"]')) {
+          if (document.querySelector('link[href*="wp-content"]') ||
+            document.querySelector('script[src*="wp-includes"]') ||
+            document.querySelector('script[src*="wp-content"]')) {
             return true;
           }
-          
+
           const generator = document.querySelector('meta[name="generator"]');
           if (generator?.content.toLowerCase().includes('wordpress')) {
             return true;
           }
-          
+
           const headHTML = document.head.innerHTML;
           if (headHTML.includes('wp-content') || headHTML.includes('wp-includes')) {
             return true;
           }
-          
+
           return false;
         }
       });
@@ -129,11 +129,11 @@
       tabPosition = position; // Update memory immediately
       await chrome.storage.local.set({ tabPosition: position });
       console.log('✅ Saved tab position:', position);
-      
+
       // Verify
       const verify = await chrome.storage.local.get(['tabPosition']);
       console.log('✅ Verified in storage:', verify.tabPosition);
-      
+
       return true;
     } catch (e) {
       console.error('❌ Failed to save tab position:', e);
@@ -164,25 +164,19 @@
     return urlObj.toString();
   }
 
-  async function clearCacheAndCookies(url) {
+  async function clearCacheOnly(url) {
     try {
       const urlObj = new URL(url);
-      const domain = urlObj.hostname;
-      
-      // Clear cache for this domain
+
+      // Only clear cache - DO NOT clear cookies
       await chrome.browsingData.removeCache({
         origins: [urlObj.origin]
       });
-      
-      // Clear cookies for this domain
-      await chrome.browsingData.removeCookies({
-        origins: [urlObj.origin]
-      });
-      
-      console.log('✅ Cache and cookies cleared for:', domain);
+
+      console.log('✅ Cache cleared for:', urlObj.hostname);
       return true;
     } catch (e) {
-      console.error('❌ Error clearing cache/cookies:', e);
+      console.error('❌ Error clearing cache:', e);
       return false;
     }
   }
@@ -190,28 +184,28 @@
   function updateTabPositionButtons(position) {
     const beforeBtn = document.getElementById('beforeBtn');
     const afterBtn = document.getElementById('afterBtn');
-    
+
     if (beforeBtn && afterBtn) {
       beforeBtn.classList.remove('active');
       afterBtn.classList.remove('active');
-      
+
       if (position === 'before') {
         beforeBtn.classList.add('active');
       } else {
         afterBtn.classList.add('active');
       }
-      
+
       console.log('🎨 Updated buttons, active:', position);
     }
   }
 
   async function openInNewTab(url) {
     const tab = await getCurrentTab();
-    
+
     // Use the memory variable (already loaded from storage)
     const position = tabPosition;
     const index = position === 'before' ? tab.index : tab.index + 1;
-    
+
     console.log('━━━━━━━━━━━━━━━━━━━━━━');
     console.log('📂 Opening new tab:');
     console.log('   Position setting:', position);
@@ -219,8 +213,8 @@
     console.log('   New tab will be at index:', index);
     console.log('   Direction:', position === 'before' ? '⬅️ LEFT (BEFORE)' : '➡️ RIGHT (AFTER)');
     console.log('━━━━━━━━━━━━━━━━━━━━━━');
-    
-    await chrome.tabs.create({ 
+
+    await chrome.tabs.create({
       url: url,
       index: index,
       windowId: currentWindow.id
@@ -242,10 +236,10 @@
     if (elementorToggle) {
       elementorToggle.addEventListener('change', async () => {
         const isEnabled = elementorToggle.checked;
-        
+
         try {
           const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-          
+
           if (isEnabled) {
             // Inject CSS to hide elementor loading panel
             await chrome.scripting.insertCSS({
@@ -282,10 +276,10 @@
       statusBox.style.display = 'none';
       wpSection.style.display = 'block';
       warningBox.style.display = 'none';
-      
+
       // Set initial button state based on loaded position
       updateTabPositionButtons(tabPosition);
-      
+
       // Before button handler
       const beforeBtn = document.getElementById('beforeBtn');
       if (beforeBtn) {
@@ -298,7 +292,7 @@
           }
         });
       }
-      
+
       // After button handler
       const afterBtn = document.getElementById('afterBtn');
       if (afterBtn) {
@@ -338,20 +332,20 @@
     // Normal Visit (clear cache + same tab)
     document.getElementById('normalVisitBtn')?.addEventListener('click', async () => {
       const noCacheUrl = addNoCacheParam(currentUrl);
-      await clearCacheAndCookies(currentUrl);
-      
+      await clearCacheOnly(currentUrl); // Changed from clearCacheAndCookies
+
       const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
       await chrome.tabs.update(currentTab.id, { url: noCacheUrl });
-      
+
       showToast('🔄 Cache Cleared - Reloading');
-      window.close(); // Close popup after action
+      window.close();
     });
 
     // Incognito Visit (clear cache + incognito tab)
     document.getElementById('incognitoBtn')?.addEventListener('click', async () => {
       const noCacheUrl = addNoCacheParam(currentUrl);
-      await clearCacheAndCookies(currentUrl);
-      
+      await clearCacheOnly(currentUrl); // Changed from clearCacheAndCookies
+
       try {
         await chrome.windows.create({
           url: noCacheUrl,
