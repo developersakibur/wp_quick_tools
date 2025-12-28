@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8">
   <style>
@@ -10,8 +9,13 @@
       box-sizing: border-box;
     }
 
+    html{
+      min-height: 700px !important;
+    }
+
     body {
       width: 380px;
+      min-height: 700px !important;
       font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
       background: #0d1117;
       color: #c9d1d9;
@@ -80,12 +84,12 @@
       transition: 0.3s;
     }
 
-    .toggle-container input:checked+.toggle-slider {
+    .toggle-container input:checked + .toggle-slider {
       background-color: #238636;
       border-color: #238636;
     }
 
-    .toggle-container input:checked+.toggle-slider:before {
+    .toggle-container input:checked + .toggle-slider:before {
       transform: translateX(16px);
       background-color: #ffffff;
     }
@@ -338,27 +342,16 @@
       font-weight: 600;
       font-size: 12px;
       z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
       animation: fadeInOut 1.5s;
     }
 
     @keyframes fadeInOut {
-
-      0%,
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.9);
-      }
-
-      15%,
-      85% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-      }
+      0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+      15%, 85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
   </style>
 </head>
-
 <body>
   <div class="header">
     <div class="header-title">
@@ -464,6 +457,21 @@
         </div>
       </div>
 
+      <!-- No Cache -->
+      <div class="section">
+        <div class="section-title">No Cache</div>
+        <div class="tool-grid">
+          <button class="btn" id="normalVisitBtn">
+            <span>🔄</span>
+            <span>Normal</span>
+          </button>
+          <button class="btn" id="incognitoBtn">
+            <span>🕶️</span>
+            <span>Incognito</span>
+          </button>
+        </div>
+      </div>
+
       <!-- PageSpeed -->
       <div class="section">
         <div class="section-title">Performance</div>
@@ -491,5 +499,4 @@
 
   <script src="popup.js"></script>
 </body>
-
 </html>

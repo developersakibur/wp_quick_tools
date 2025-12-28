@@ -149,6 +149,44 @@
     setTimeout(() => toast.remove(), 1500);
   }
 
+  function generateNoCacheParam() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 10; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  function addNoCacheParam(url) {
+    const urlObj = new URL(url);
+    urlObj.searchParams.set('nocache', generateNoCacheParam());
+    return urlObj.toString();
+  }
+
+  async function clearCacheAndCookies(url) {
+    try {
+      const urlObj = new URL(url);
+      const domain = urlObj.hostname;
+      
+      // Clear cache for this domain
+      await chrome.browsingData.removeCache({
+        origins: [urlObj.origin]
+      });
+      
+      // Clear cookies for this domain
+      await chrome.browsingData.removeCookies({
+        origins: [urlObj.origin]
+      });
+      
+      console.log('✅ Cache and cookies cleared for:', domain);
+      return true;
+    } catch (e) {
+      console.error('❌ Error clearing cache/cookies:', e);
+      return false;
+    }
+  }
+
   function updateTabPositionButtons(position) {
     const beforeBtn = document.getElementById('beforeBtn');
     const afterBtn = document.getElementById('afterBtn');
@@ -228,7 +266,8 @@
           showToast('❌ Toggle Failed');
         }
       });
-    };
+    }
+
     // Load saved tab position FIRST
     await loadTabPosition();
 
@@ -294,6 +333,35 @@
     // WHOIS
     document.getElementById('whoisBtn')?.addEventListener('click', async () => {
       await openInNewTab(`https://who.is/whois/${domain}`);
+    });
+
+    // Normal Visit (clear cache + same tab)
+    document.getElementById('normalVisitBtn')?.addEventListener('click', async () => {
+      const noCacheUrl = addNoCacheParam(currentUrl);
+      await clearCacheAndCookies(currentUrl);
+      
+      const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      await chrome.tabs.update(currentTab.id, { url: noCacheUrl });
+      
+      showToast('🔄 Cache Cleared - Reloading');
+      window.close(); // Close popup after action
+    });
+
+    // Incognito Visit (clear cache + incognito tab)
+    document.getElementById('incognitoBtn')?.addEventListener('click', async () => {
+      const noCacheUrl = addNoCacheParam(currentUrl);
+      await clearCacheAndCookies(currentUrl);
+      
+      try {
+        await chrome.windows.create({
+          url: noCacheUrl,
+          incognito: true
+        });
+        showToast('🕶️ Opened in Incognito');
+      } catch (e) {
+        console.error('Incognito error:', e);
+        showToast('❌ Incognito blocked - Check permissions');
+      }
     });
 
     // View Website
