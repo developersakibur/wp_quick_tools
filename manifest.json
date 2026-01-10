@@ -1,11 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "WordPress Detector",
+  "name": "WP Quick Tools",
   "version": "1.0",
-  "description": "Detect WordPress sites and quick access to admin panel",
+  "description": "Quick access to WordPress admin, detector, and essential tools",
   "permissions": ["browsingData", "storage", "tabs", "scripting", "activeTab"],
   "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html"
+  },
+  "icons": {
+    "128": "icon.png"
   }
 }
