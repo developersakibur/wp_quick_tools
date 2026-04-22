@@ -8,146 +8,77 @@
 
 <body>
   <div class="header">
-    <div class="header-title">
-      <span>⚡</span>
-      <span>WordPress Detector by Sakibur Rahman</span>
-    </div>
-    <div class="header-bottom">
-      <label class="toggle-container">
-        <input type="checkbox" id="elementorToggle">
-        <span class="toggle-slider"></span>
-      </label>
-      <div class="header-url" id="currentUrl">Loading...</div>
-    </div>
+    <h1>WP Quick Tools</h1>
   </div>
 
   <div id="content" class="container">
-    <!-- Status (Hidden when WordPress detected) -->
-    <div id="statusBox" class="status-box">
-      <div class="status-text" id="statusText">Checking...</div>
-      <div class="serial-text" id="serialText">Please wait...</div>
-    </div>
-
-    <!-- Warning for non-WordPress sites -->
-    <div id="warningBox" class="warning-box" style="display: none;">
-      <div class="warning-icon">⚠️</div>
-      <div class="warning-text">Not a WordPress Site</div>
-      <div class="warning-desc">This extension only works on WordPress websites</div>
+    <!-- Tab Position Settings -->
+    <div class="section">
+      <div class="position-toggle">
+        <button class="position-btn" id="beforeBtn">← Before</button>
+        <button class="position-btn active" id="afterBtn">After →</button>
+      </div>
     </div>
 
     <!-- WordPress Links -->
-    <div id="wpSection" style="display: none;">
-      <!-- Tab Position Settings -->
-      <div class="section">
-        <div class="section-title"></div>
-        <div class="position-toggle">
-          <button class="position-btn" id="beforeBtn">← Before</button>
-          <button class="position-btn active" id="afterBtn">After →</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"></div>
-        <div class="link-list">
-          <div class="link-grid">
-            <div class="link-item" data-url="/wp-admin/">
-              <div class="link-label">
-                <span class="link-icon">🔐</span>
-                <span>WP-Admin</span>
-              </div>
-              <span class="link-arrow">→</span>
-            </div>
-            <div class="link-item" data-url="/wp-admin/admin.php?page=ai1wm_export">
-              <div class="link-label">
-                <span class="link-icon">⚙️</span>
-                <span>All In One</span>
-              </div>
-              <span class="link-arrow">→</span>
-            </div>
-            <div class="link-item" data-url="/wp-admin/edit.php?post_type=page">
-              <div class="link-label">
-                <span class="link-icon">📄</span>
-                <span>Pages</span>
-              </div>
-              <span class="link-arrow">→</span>
-            </div>
-            <div class="link-item" data-url="/wp-admin/edit.php?post_type=elementor_library">
-              <div class="link-label">
-                <span class="link-icon">🎨</span>
-                <span>Template</span>
-              </div>
-              <span class="link-arrow">→</span>
-            </div>
-            <div class="link-item" data-url="/wp-admin/themes.php">
-              <div class="link-label">
-                <span class="link-icon">🎭</span>
-                <span>Themes</span>
-              </div>
-              <span class="link-arrow">→</span>
-            </div>
-            <div class="link-item" data-url="/wp-admin/plugins.php">
-              <div class="link-label">
-                <span class="link-icon">🔌</span>
-                <span>Plugins</span>
-              </div>
-              <span class="link-arrow">→</span>
-            </div>
+    <div id="wpSection" class="section">
+      <div class="link-grid">
+        <div class="link-item" data-url="/wp-admin/">
+          <div class="link-label">
+            <span>WP-Admin</span>
           </div>
+          <span class="link-arrow">→</span>
+        </div>
+        <div class="link-item" data-url="/wp-admin/admin.php?page=ai1wm_export">
+          <div class="link-label">
+            <span>All In One</span>
+          </div>
+          <span class="link-arrow">→</span>
         </div>
       </div>
+    </div>
 
-      <!-- PageSpeed -->
-      <div class="section">
-        <div class="section-title"></div>
-        <div class="tool-grid">
-          <button class="btn" id="viewWebsiteBtn">
-            <span>🏠</span>
-            <span>View Website</span>
-          </button>
-          <button class="btn" id="pageSpeedBtn">
-            <span>⚡</span>
-            <span>PageSpeed</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- No Cache -->
-      <div class="section">
-        <div class="section-title"></div>
-        <div class="tool-grid">
-          <button class="btn" id="normalVisitBtn">
-            <span>🔄</span>
-            <span>NC Normal</span>
-          </button>
-          <button class="btn" id="incognitoBtn">
-            <span>🕶️</span>
-            <span>NC Incognito</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- DNS Checker -->
-      <div class="section">
-        <div class="section-title"></div>
-        <div class="tool-grid">
-          <button class="btn" id="dnsCheckerBtn">
-            <span>🌐</span>
-            <span>DNS Checker</span>
-          </button>
-          <button class="btn" id="whoisBtn">
-            <span>🔍</span>
-            <span>WHOIS</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Copy URL -->
-      <div class="">
-        <button class="btn btn-primary" id="copyUrlBtn">
-          <span>📋</span>
-          <span>Copy URL</span>
+    <!-- Website Access -->
+    <div class="section">
+      <div class="tool-grid">
+        <button class="btn" id="viewWebsiteBtn">
+          <span>Normal</span>
+        </button>
+        <button class="btn" id="websiteIncognitoBtn">
+          <span>Incognito</span>
         </button>
       </div>
+    </div>
+
+    <!-- No Cache Tools -->
+    <div class="section">
+      <div class="tool-grid">
+        <button class="btn" id="normalVisitBtn">
+          <span>NC Normal</span>
+        </button>
+        <button class="btn" id="incognitoBtn">
+          <span>NC Incognito</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Analysis Tools -->
+    <div class="section">
+      <div class="tool-grid">
+        <button class="btn" id="pageSpeedBtn">
+          <span>Speed</span>
+        </button>
+        <button class="btn" id="dnsCheckerBtn">
+          <span>DNS</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Tools -->
+    <div class="section">
+      <button class="btn btn-primary" id="copyUrlBtn">
+        <span>Copy Current URL</span>
+      </button>
     </div>
   </div>
 
